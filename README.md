@@ -67,3 +67,5 @@ Frontend Repository (HTML + JS on Vercel) → https://github.com/Srabany/transla
 ## 📌 Note:
 You can visit the frontend repo to check the UI.
 
+## ⚠️ Note: 
+The backend is hosted on Render (Free Tier), so if the app hasn’t been used for a while, the first load might take ~30–50 seconds while the server wakes up. After that, it will be fast.
