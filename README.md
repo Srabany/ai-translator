@@ -57,4 +57,13 @@ curl -X POST http://127.0.0.1:5000/translate \
 -H "Content-Type: application/json" \
 -d '{"text": "Hello", "input_lang": "en", "target_lang": "fr"}'
 
+## 🚀 Live Demo
+🌐 Try it here: https://translator-frontend-ldjz.vercel.app/
+
+## 🔄 Related Repositories
+
+Frontend Repository (HTML + JS on Vercel) → https://github.com/Srabany/translator-frontend
+
+## 📌 Note:
+You can visit the frontend repo to check the UI.
 
