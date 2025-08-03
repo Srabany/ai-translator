@@ -5,7 +5,8 @@ import os
 
 app = Flask(__name__)
 
-# Get dictionary {Full Name: Code}
+# ✅ Get a dictionary of supported languages: {Full Name: Code}
+@app.route("/languages", methods=["GET"])
 def get_languages():
     langs = GoogleTranslator().get_supported_languages(as_dict=True)
     full_names = {}
@@ -18,33 +19,29 @@ def get_languages():
                 full_names[name.capitalize()] = code
         except:
             full_names[name.capitalize()] = code
-    return dict(sorted(full_names.items()))
+    return jsonify(dict(sorted(full_names.items())))
 
-@app.route("/languages", methods=["GET"])
-def languages():
-    return jsonify(get_languages())
-
+# ✅ Translate endpoint
 @app.route("/translate", methods=["POST"])
-def translate_api():
-    data = request.json
-    original_text = data.get("text", "")
-    input_lang = data.get("input_lang", "en")
-    target_lang = data.get("target_lang", "bn")
+def translate():
+    data = request.get_json()
+    text = data.get("text", "")
+    input_lang = data.get("input_lang", "auto")
+    target_lang = data.get("target_lang", "en")
 
-    if not original_text.strip():
+    if not text.strip():
         return jsonify({"error": "No text provided"}), 400
 
     try:
-        translated_text = GoogleTranslator(
-            source=input_lang, target=target_lang
-        ).translate(original_text)
+        translated = GoogleTranslator(source=input_lang, target=target_lang).translate(text)
         return jsonify({
-            "original_text": original_text,
-            "translated_text": translated_text
+            "original_text": text,
+            "translated_text": translated
         })
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+# ✅ Run locally or on Render
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port)
