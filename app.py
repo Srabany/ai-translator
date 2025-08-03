@@ -2,10 +2,13 @@ from flask import Flask, request, jsonify
 from deep_translator import GoogleTranslator
 import pycountry
 import os
+from flask_cors import CORS  # ✅ NEW
 
 app = Flask(__name__)
+CORS(app)  # ✅ Allow requests from any domain (Vercel frontend)
 
-# Function to get dictionary {Full Name: Code}
+# Function to get languages
+@app.route("/languages", methods=["GET"])
 def get_languages():
     langs = GoogleTranslator().get_supported_languages(as_dict=True)
     full_names = {}
@@ -18,32 +21,20 @@ def get_languages():
                 full_names[name.capitalize()] = code
         except:
             full_names[name.capitalize()] = code
-    return dict(sorted(full_names.items()))
+    return jsonify(dict(sorted(full_names.items())))
 
-# API route for languages
-@app.route("/languages", methods=["GET"])
-def languages_api():
-    return jsonify(get_languages())
-
-# API route for translation
+# Translation route
 @app.route("/translate", methods=["POST"])
-def translate_api():
-    data = request.get_json()
+def translate():
+    data = request.json
     text = data.get("text", "")
-    input_lang = data.get("input_lang", "auto")
+    input_lang = data.get("input_lang", "en")
     target_lang = data.get("target_lang", "en")
-
-    if not text.strip():
-        return jsonify({"error": "No text provided"}), 400
-
-    try:
-        translated_text = GoogleTranslator(source=input_lang, target=target_lang).translate(text)
-        return jsonify({
-            "original_text": text,
-            "translated_text": translated_text
-        })
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
+    translated = GoogleTranslator(source=input_lang, target=target_lang).translate(text)
+    return jsonify({
+        "original_text": text,
+        "translated_text": translated
+    })
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
