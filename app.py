@@ -2,12 +2,11 @@ from flask import Flask, request, jsonify
 from deep_translator import GoogleTranslator
 import pycountry
 import os
-from flask_cors import CORS  # ✅ NEW
+from flask_cors import CORS  
 
 app = Flask(__name__)
-CORS(app)  # ✅ Allow requests from any domain (Vercel frontend)
+CORS(app)  
 
-# Function to get languages
 @app.route("/languages", methods=["GET"])
 def get_languages():
     langs = GoogleTranslator().get_supported_languages(as_dict=True)
@@ -23,7 +22,7 @@ def get_languages():
             full_names[name.capitalize()] = code
     return jsonify(dict(sorted(full_names.items())))
 
-# Translation route
+
 @app.route("/translate", methods=["POST"])
 def translate():
     data = request.json
